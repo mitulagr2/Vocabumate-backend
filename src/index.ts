@@ -13,7 +13,7 @@ app.get("/define", async (req: Request, res: Response) => {
   if (word && typeof word === "string") {
     const prompt = `Provide an overview of the word '${word}'.`;
     const output = await generateContent(prompt);
-    res.json(output);
+    res.json({ word, meaning: output });
   }
 
   res.status(400).json({
