@@ -6,9 +6,23 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-app.get("/", (req: Request, res: Response) => {
-  console.log(req.body);
-  res.send("Express + TypeScript Server");
+import generateContent from "./generate";
+
+app.get("/define", async (req: Request, res: Response) => {
+  const word = req.query.word;
+  if (word && typeof word === "string") {
+    const output = await generateContent(word);
+    res.json(output);
+  }
+
+  res.status(400).json({
+    status: 400,
+    message: "Please provide an appropriate word query.",
+  });
+});
+
+app.get("/ping", (_req: Request, res: Response) => {
+  res.json("pong");
 });
 
 app.listen(port, () => {
