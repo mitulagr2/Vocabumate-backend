@@ -11,7 +11,8 @@ import generateContent from "./generate";
 app.get("/define", async (req: Request, res: Response) => {
   const word = req.query.word;
   if (word && typeof word === "string") {
-    const output = await generateContent(word);
+    const prompt = `Provide an overview of the word '${word}'.`;
+    const output = await generateContent(prompt);
     res.json(output);
   }
 
