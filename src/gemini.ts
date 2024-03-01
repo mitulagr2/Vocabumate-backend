@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -29,7 +29,7 @@ const model = genAI.getGenerativeModel({
   safetySettings,
 });
 
-const generateContent = async (prompt: String) => {
+export const generateContent = async (prompt: string) => {
   try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -39,5 +39,3 @@ const generateContent = async (prompt: String) => {
     return e;
   }
 };
-
-export default generateContent;

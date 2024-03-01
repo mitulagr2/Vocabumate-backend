@@ -10,20 +10,27 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-import generateContent from "./generate";
+import { generateContent } from "./gemini";
+import { getAndIncWord, addWord } from "./cockroachdb";
 
 app.get("/define", async (req: Request, res: Response) => {
   const word = req.query.word;
-  if (word && typeof word === "string") {
-    const prompt = `Provide an overview of the word '${word}'.`;
-    const output = await generateContent(prompt);
-    return res.json({ word, meaning: output });
+  if (!word || typeof word !== "string") {
+    return res.status(400).json({
+      status: 400,
+      message: "Please provide an appropriate word query.",
+    });
   }
 
-  res.status(400).json({
-    status: 400,
-    message: "Please provide an appropriate word query.",
-  });
+  try {
+    const saved = await getAndIncWord(word);
+    res.json(saved);
+  } catch (PrismaClientKnownRequestError) {
+    const prompt = `Provide an overview of the word '${word}'.`;
+    const output = await generateContent(prompt);
+    const newWord = await addWord({ word, meaning: output });
+    res.json(newWord);
+  }
 });
 
 app.get("/ping", (_req: Request, res: Response) => {
