@@ -22,7 +22,10 @@ const updateDailyWord = async () => {
     },
   });
 
-  dailyWord = await res.json();
+  const newWord = JSON.parse(await res.json()).word;
+  const prompt = `Provide an overview of the word '${newWord}'.`;
+  const output = await generateContent(prompt);
+  dailyWord = JSON.stringify({ word: newWord, meaning: output });
 
   setTimeout(updateDailyWord, 1000 * 3600 * 24);
 };
