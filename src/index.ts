@@ -29,13 +29,19 @@ const updateDailyWord = async () => {
 updateDailyWord();
 
 app.get("/define", async (req: Request, res: Response) => {
-  const word = req.query.word;
+  let word = req.query.word;
   if (!word || typeof word !== "string") {
     return res.status(400).json({
       status: 400,
       message: "Please provide an appropriate word query.",
     });
   }
+
+  word = word
+    .replace(/^[^a-zA-Z ]*$/, "")
+    .trim()
+    .replace(/\\s+/, " ")
+    .toLowerCase();
 
   try {
     const saved = await getAndIncWord(word);
