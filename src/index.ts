@@ -13,6 +13,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 import { generateContent } from "./gemini";
 import { getAndIncWord, addWord } from "./cockroachdb";
 
+let dailyWord: string;
+
+const updateDailyWord = async () => {
+  const res = await fetch("https://api.api-ninjas.com/v1/randomword", {
+    headers: {
+      "X-Api-Key": process.env.RANDOM_WORD_API_KEY,
+    },
+  });
+
+  dailyWord = await res.json();
+
+  setTimeout(updateDailyWord, 1000 * 3600 * 24);
+};
+updateDailyWord();
+
 app.get("/define", async (req: Request, res: Response) => {
   const word = req.query.word;
   if (!word || typeof word !== "string") {
@@ -31,6 +46,11 @@ app.get("/define", async (req: Request, res: Response) => {
     const newWord = await addWord({ word, meaning: output });
     res.json(newWord);
   }
+  // TODO: handle other errors
+});
+
+app.get("/daily", (_req: Request, res: Response) => {
+  res.json(dailyWord);
 });
 
 app.get("/ping", (_req: Request, res: Response) => {
