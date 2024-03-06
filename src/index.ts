@@ -22,7 +22,7 @@ const updateDailyWord = async () => {
     },
   });
 
-  const newWord = JSON.parse(await res.json()).word;
+  const newWord = (await res.json()).word;
   const prompt = `Provide an overview of the word '${newWord}'.`;
   const output = await generateContent(prompt);
   dailyWord = JSON.stringify({ word: newWord, meaning: output });
