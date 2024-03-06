@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 import { generateContent } from "./gemini";
 import { getAndIncWord, addWord } from "./cockroachdb";
 
-let dailyWord: string;
+let dailyWord: { word: string; meaning: string };
 
 const updateDailyWord = async () => {
   const res = await fetch("https://api.api-ninjas.com/v1/randomword", {
@@ -25,7 +25,7 @@ const updateDailyWord = async () => {
   const newWord = (await res.json()).word;
   const prompt = `Provide an overview of the word '${newWord}'.`;
   const output = await generateContent(prompt);
-  dailyWord = JSON.stringify({ word: newWord, meaning: output });
+  dailyWord = { word: newWord, meaning: output };
 
   setTimeout(updateDailyWord, 1000 * 3600 * 24);
 };
